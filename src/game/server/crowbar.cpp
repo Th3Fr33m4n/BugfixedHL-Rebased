@@ -225,6 +225,8 @@ int CCrowbar::Swing(int fFirst)
 		// player "shoot" animation
 		m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
+		m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.25;
+
 #ifndef CLIENT_DLL
 
 		// hit
@@ -308,7 +310,6 @@ int CCrowbar::Swing(int fFirst)
 
 		m_pPlayer->m_iWeaponVolume = flVol * CROWBAR_WALLHIT_VOLUME;
 #endif
-		m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.25;
 
 		SetThink(&CCrowbar::Smack);
 		pev->nextthink = UTIL_WeaponTimeBase() + 0.2;
