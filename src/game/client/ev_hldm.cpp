@@ -1471,7 +1471,7 @@ void EV_EgonFire(event_args_t *args)
 
 			EV_GetGunPosition(args, vecSrc, pl->origin);
 
-			VectorMA(vecSrc, 2048, forward, vecEnd);
+			VectorMA(vecSrc, 8192, forward, vecEnd);
 
 			gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction(false, true);
 

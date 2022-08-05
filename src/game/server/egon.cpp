@@ -239,7 +239,7 @@ void CEgon::PrimaryAttack(void)
 
 void CEgon::Fire(const Vector &vecOrigSrc, const Vector &vecDir)
 {
-	Vector vecDest = vecOrigSrc + vecDir * 2048;
+	Vector vecDest = vecOrigSrc + vecDir * 8192;
 	edict_t *pentIgnore;
 	TraceResult tr;
 
