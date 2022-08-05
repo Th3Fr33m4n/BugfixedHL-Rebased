@@ -21,6 +21,7 @@
 #include "player.h"
 #include "effects.h"
 #include "gamerules.h"
+#include "beamdef.h"
 
 #define TRIPMINE_PRIMARY_VOLUME 450
 
@@ -250,6 +251,7 @@ void CTripmineGrenade ::MakeBeam(void)
 	m_pBeam->SetColor(0, 214, 198);
 	m_pBeam->SetScrollRate(255);
 	m_pBeam->SetBrightness(64);
+	m_pBeam->SetFlags(FBEAM_SHADEIN);
 }
 
 void CTripmineGrenade ::BeamBreakThink(void)
