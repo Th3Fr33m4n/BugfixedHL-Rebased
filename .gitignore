@@ -6,3 +6,4 @@
 
 # macOS garbage
 .DS_Store
+*.bat
