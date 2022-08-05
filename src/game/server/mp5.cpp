@@ -52,7 +52,11 @@ void CMP5::Spawn()
 	SET_MODEL(ENT(pev), "models/w_9mmAR.mdl");
 	m_iId = WEAPON_MP5;
 
+#ifdef CLIENT_DLL
+	if (!bIsMultiplayer()) {
+#else
 	if (!g_pGameRules->IsMultiplayer()) {
+#endif
 		m_iDefaultAmmo = MP5_DEFAULT_GIVE;
 	} else {
 		m_iDefaultAmmo = MP5_MAX_CLIP;
