@@ -332,7 +332,6 @@ int CBasePlayerWeapon::AddToPlayer(CBasePlayer *pPlayer) { return FALSE; }
 int CBasePlayerWeapon::UpdateClientData(CBasePlayer *pPlayer) { return 0; }
 BOOL CBasePlayerWeapon::AddPrimaryAmmo(int iCount, char *szName, int iMaxClip, int iMaxCarry) { return TRUE; }
 BOOL CBasePlayerWeapon::AddSecondaryAmmo(int iCount, char *szName, int iMax) { return TRUE; }
-BOOL CBasePlayerWeapon::IsUseable(void) { return TRUE; }
 int CBasePlayerWeapon::PrimaryAmmoIndex(void) { return -1; }
 int CBasePlayerWeapon::SecondaryAmmoIndex(void) { return -1; }
 void CBasePlayerAmmo::Spawn(void) { }

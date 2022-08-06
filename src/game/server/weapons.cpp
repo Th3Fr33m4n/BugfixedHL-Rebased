@@ -914,20 +914,6 @@ BOOL CBasePlayerWeapon ::AddSecondaryAmmo(int iCount, char *szName, int iMax)
 //=========================================================
 BOOL CBasePlayerWeapon ::IsUseable(void)
 {
-	if (m_iClip <= 0)
-	{
-		if (m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()] <= 0 && iMaxAmmo1() != -1)
-		{
-			// clip is empty (or nonexistant) and the player has no more ammo of this type.
-			return FALSE;
-		}
-	}
-
-	return TRUE;
-}
-
-BOOL CBasePlayerWeapon ::CanDeploy(void)
-{
 	BOOL bHasAmmo = 0;
 
 	if (!pszAmmo1())
@@ -944,16 +930,17 @@ BOOL CBasePlayerWeapon ::CanDeploy(void)
 	{
 		bHasAmmo |= (m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] > 0);
 	}
-	if (m_iClip > 0)
+	if (!bHasAmmo && m_iClip > 0)
 	{
-		bHasAmmo |= 1;
+		bHasAmmo |= TRUE;
 	}
-	if (!bHasAmmo)
-	{
-		return FALSE;
-	}
+	
+	return bHasAmmo;
+}
 
-	return TRUE;
+BOOL CBasePlayerWeapon ::CanDeploy(void)
+{
+	return IsUseable();
 }
 
 BOOL CBasePlayerWeapon ::DefaultDeploy(char *szViewModel, char *szWeaponModel, int iAnim, char *szAnimExt, int skiplocal /* = 0 */, int body)
