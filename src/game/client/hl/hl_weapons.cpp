@@ -173,11 +173,15 @@ CBasePlayerWeapon:: CanDeploy
 */
 BOOL CBasePlayerWeapon::CanDeploy(void)
 {
-	BOOL bHasAmmo = 0;
+	return IsUseable();
+}
+
+BOOL CBasePlayerWeapon::IsUseable(void) {
+	BOOL bHasAmmo = FALSE;
 
 	if (!pszAmmo1())
 	{
-		// this weapon doesn't use ammo, can always deploy.
+		// this weapon doesn't use ammo, can always be used.
 		return TRUE;
 	}
 
@@ -189,16 +193,12 @@ BOOL CBasePlayerWeapon::CanDeploy(void)
 	{
 		bHasAmmo |= (m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] != 0);
 	}
-	if (m_iClip > 0)
+	if (!bHasAmmo && m_iClip > 0)
 	{
-		bHasAmmo |= 1;
-	}
-	if (!bHasAmmo)
-	{
-		return FALSE;
+		bHasAmmo |= TRUE;
 	}
 
-	return TRUE;
+	return bHasAmmo;
 }
 
 /*
