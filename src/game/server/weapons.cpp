@@ -864,9 +864,12 @@ BOOL CBasePlayerWeapon ::AddPrimaryAmmo(int iCount, char *szName, int iMaxClip, 
 	}
 	else if (m_iClip == 0)
 	{
-		int i;
-		i = min(m_iClip + iCount, iMaxClip) - m_iClip;
-		m_iClip += i;
+		int i = 0;
+		if (m_pPlayer->HasPlayerItem(this))
+		{
+			i = min(m_iClip + iCount, iMaxClip) - m_iClip;
+			m_iClip += i;
+		}
 		iIdAmmo = m_pPlayer->GiveAmmo(iCount - i, szName, iMaxCarry);
 	}
 	else
