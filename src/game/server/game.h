@@ -42,6 +42,7 @@ extern cvar_t teamlist;
 extern cvar_t teamoverride;
 extern cvar_t defaultteam;
 extern cvar_t allowmonsters;
+extern cvar_t frictiontriggers;
 extern cvar_t mp_notify_player_status;
 extern cvar_t mp_welcomecam;
 extern cvar_t mp_respawn_fix;

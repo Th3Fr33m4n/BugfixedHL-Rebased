@@ -1712,7 +1712,7 @@ void CBasePlayer::Jump()
 
 	SetAnimation(PLAYER_JUMP);
 
-	if (m_fLongJump && (pev->button & IN_DUCK) && (pev->flDuckTime > 0) && pev->velocity.Length() > 50)
+	if (m_fLongJump && (pev->button & IN_DUCK) && pev->velocity.Length() > 50)
 	{
 		SetAnimation(PLAYER_SUPERJUMP);
 	}
