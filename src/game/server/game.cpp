@@ -54,6 +54,7 @@ cvar_t teamlist = { "mp_teamlist", "hgrunt;scientist", FCVAR_SERVER };
 cvar_t teamoverride = { "mp_teamoverride", "1" }; // Could or not a map override team list
 cvar_t defaultteam = { "mp_defaultteam", "0" }; // Players are forced to first team in the team list
 cvar_t allowmonsters = { "mp_allowmonsters", "0", FCVAR_SERVER };
+cvar_t frictiontriggers = { "mp_frictiontriggers", "0", FCVAR_SERVER };
 
 cvar_t mp_chattime = { "mp_chattime", "10", FCVAR_SERVER };
 cvar_t mp_notify_player_status = { "mp_notify_player_status", "7" }; // Notifications about join/leave/spectate
@@ -505,6 +506,7 @@ void GameDLLInit(void)
 	CVAR_REGISTER(&teamoverride);
 	CVAR_REGISTER(&defaultteam);
 	CVAR_REGISTER(&allowmonsters);
+	CVAR_REGISTER(&frictiontriggers);
 
 	CVAR_REGISTER(&mp_chattime);
 	CVAR_REGISTER(&mp_notify_player_status);

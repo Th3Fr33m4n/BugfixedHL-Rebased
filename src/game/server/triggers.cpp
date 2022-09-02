@@ -77,7 +77,7 @@ void CFrictionModifier ::Spawn(void)
 // Sets toucher's friction to m_frictionFraction (1.0 = normal friction)
 void CFrictionModifier ::ChangeFriction(CBaseEntity *pOther)
 {
-	if (pOther->pev->movetype != MOVETYPE_BOUNCEMISSILE && pOther->pev->movetype != MOVETYPE_BOUNCE)
+	if (pOther->pev->movetype != MOVETYPE_BOUNCEMISSILE && pOther->pev->movetype != MOVETYPE_BOUNCE && (!g_pGameRules->IsMultiplayer() || CVAR_GET_FLOAT("mp_frictiontriggers") > 0))
 		pOther->pev->friction = m_frictionFraction;
 }
 
