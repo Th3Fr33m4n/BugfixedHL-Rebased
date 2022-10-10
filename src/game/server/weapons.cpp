@@ -30,6 +30,7 @@
 #include "soundent.h"
 #include "decals.h"
 #include "gamerules.h"
+#include <cmath>
 
 extern CGraph WorldGraph;
 extern int gEvilImpulse101;
@@ -171,6 +172,9 @@ void DecalGunshot(TraceResult *pTrace, int iBulletType)
 		case BULLET_MONSTER_MP5:
 		case BULLET_PLAYER_BUCKSHOT:
 		case BULLET_PLAYER_357:
+		case BULLET_PLAYER_556:
+		case BULLET_PLAYER_762:
+		case BULLET_PLAYER_EAGLE:
 		default:
 			// smoke and decal
 			UTIL_GunshotDecalTrace(pTrace, DamageDecal(pEntity, DMG_BULLET));
@@ -364,6 +368,21 @@ void EXPORT W_Precache(void)
 
 	// hornetgun
 	UTIL_PrecacheOtherWeapon("weapon_hornetgun");
+
+	//gearbox weapons
+	UTIL_PrecacheOtherWeapon("weapon_eagle");
+	UTIL_PrecacheOtherWeapon("weapon_pipewrench");
+	UTIL_PrecacheOtherWeapon("weapon_knife");
+	UTIL_PrecacheOtherWeapon("weapon_grapple");
+	UTIL_PrecacheOtherWeapon("weapon_m249");
+	UTIL_PrecacheOtherWeapon("weapon_sniperrifle");
+	UTIL_PrecacheOtherWeapon("weapon_displacer");
+	UTIL_PrecacheOtherWeapon("weapon_shockrifle");
+	UTIL_PrecacheOtherWeapon("weapon_sporelauncher");
+
+	UTIL_PrecacheOther("ammo_556");
+	UTIL_PrecacheOther("ammo_762");
+	UTIL_PrecacheOther("ammo_spore");
 
 	// weaponbox
 	if (g_pGameRules->IsDeathmatch())
@@ -606,6 +625,7 @@ BOOL CanAttack(float attack_time, float curtime, BOOL isPredicted)
 	else
 	{
 		return (attack_time <= 0.0) ? TRUE : FALSE;
+		//return ((static_cast<int>(std::floor(attack_time * 1000.0)) * 1000.0) <= 0.0) ? TRUE : FALSE;
 	}
 }
 
@@ -1561,3 +1581,45 @@ TYPEDESCRIPTION CSatchel::m_SaveData[] = {
 	DEFINE_FIELD(CSatchel, m_chargeReady, FIELD_INTEGER),
 };
 IMPLEMENT_SAVERESTORE(CSatchel, CBasePlayerWeapon);
+
+TYPEDESCRIPTION CEagle::m_SaveData[] = {
+	DEFINE_FIELD(CEagle, m_fEagleLaserActive, FIELD_INTEGER),
+};
+
+IMPLEMENT_SAVERESTORE(CEagle, CBasePlayerWeapon)
+
+TYPEDESCRIPTION CPipeWrench::m_SaveData[] = {
+	DEFINE_FIELD(CPipeWrench, m_flBigSwingStart, FIELD_TIME),
+	DEFINE_FIELD(CPipeWrench, m_iSwing, FIELD_INTEGER),
+	DEFINE_FIELD(CPipeWrench, m_iSwingMode, FIELD_INTEGER),
+};
+IMPLEMENT_SAVERESTORE(CPipeWrench, CBasePlayerWeapon)
+
+TYPEDESCRIPTION CBarnacleGrapple::m_SaveData[] = {
+	DEFINE_FIELD(CBarnacleGrapple, m_pBeam, FIELD_CLASSPTR),
+	DEFINE_FIELD(CBarnacleGrapple, m_flShootTime, FIELD_TIME),
+	DEFINE_FIELD(CBarnacleGrapple, m_fireState, FIELD_INTEGER),
+};
+IMPLEMENT_SAVERESTORE(CBarnacleGrapple, CBasePlayerWeapon)
+
+TYPEDESCRIPTION CM249::m_SaveData[] = {
+	DEFINE_FIELD(CM249, m_fInSpecialReload, FIELD_INTEGER),
+};
+IMPLEMENT_SAVERESTORE(CM249, CBasePlayerWeapon)
+
+TYPEDESCRIPTION CSniperrifle::m_SaveData[] = {
+	DEFINE_FIELD(CSniperrifle, m_fInSpecialReload, FIELD_INTEGER),
+};
+IMPLEMENT_SAVERESTORE(CSniperrifle, CBasePlayerWeapon)
+
+TYPEDESCRIPTION CDisplacer::m_SaveData[] = {
+	DEFINE_FIELD(CDisplacer, m_iFireMode, FIELD_INTEGER),
+	DEFINE_ARRAY(CDisplacer, m_pBeam, FIELD_CLASSPTR, 3),
+};
+
+IMPLEMENT_SAVERESTORE(CDisplacer, CBasePlayerWeapon)
+
+TYPEDESCRIPTION CSporelauncher::m_SaveData[] = {
+	DEFINE_FIELD(CSporelauncher, m_iSquidSpitSprite, FIELD_INTEGER),
+};
+IMPLEMENT_SAVERESTORE(CSporelauncher, CShotgun)

@@ -32,6 +32,7 @@ extern IParticleMan *g_pParticleMan;
 #if !defined(_TFC)
 extern BEAM *pBeam;
 extern BEAM *pBeam2;
+extern TEMPENTITY *pFlare;
 #endif
 
 #if defined(_TFC)
@@ -67,6 +68,7 @@ int CHud::MsgFunc_InitHUD(const char *pszName, int iSize, void *pbuf)
 #if !defined(_TFC)
 	//Probably not a good place to put this.
 	pBeam = pBeam2 = NULL;
+	pFlare = NULL;
 #endif
 
 	return 1;

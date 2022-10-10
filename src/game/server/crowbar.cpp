@@ -1,18 +1,3 @@
-/***
-*
-*	Copyright (c) 1996-2001, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
-*	All Rights Reserved.
-*
-*   Use, distribution, and modification of this source code and/or resulting
-*   object code is restricted to non-commercial enhancements to products from
-*   Valve LLC.  All other use, distribution, or modification is prohibited
-*   without written permission from Valve LLC.
-*
-****/
-
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -27,7 +12,7 @@
 
 LINK_ENTITY_TO_CLASS(weapon_crowbar, CCrowbar);
 
-enum gauss_e
+enum crowbar_e
 {
 	CROWBAR_IDLE = 0,
 	CROWBAR_DRAW,
@@ -37,7 +22,9 @@ enum gauss_e
 	CROWBAR_ATTACK2MISS,
 	CROWBAR_ATTACK2HIT,
 	CROWBAR_ATTACK3MISS,
-	CROWBAR_ATTACK3HIT
+	CROWBAR_ATTACK3HIT,
+	CROWBAR_IDLE2,
+	CROWBAR_IDLE3
 };
 
 void CCrowbar::Spawn()
@@ -80,16 +67,6 @@ int CCrowbar::GetItemInfo(ItemInfo *p)
 	return 1;
 }
 
-int CCrowbar::AddToPlayer(CBasePlayer *pPlayer)
-{
-	if (CBasePlayerWeapon::AddToPlayer(pPlayer))
-	{
-		CBasePlayerWeapon::SendWeaponPickup(pPlayer);
-		return TRUE;
-	}
-	return FALSE;
-}
-
 BOOL CCrowbar::Deploy()
 {
 	return DefaultDeploy("models/v_crowbar.mdl", "models/p_crowbar.mdl", CROWBAR_DRAW, "crowbar");
@@ -99,50 +76,6 @@ void CCrowbar::Holster(int skiplocal /* = 0 */)
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 	SendWeaponAnim(CROWBAR_HOLSTER);
-}
-
-void FindHullIntersection(const Vector &vecSrc, TraceResult &tr, float *mins, float *maxs, edict_t *pEntity)
-{
-	int i, j, k;
-	float distance;
-	float *minmaxs[2] = { mins, maxs };
-	TraceResult tmpTrace;
-	Vector vecHullEnd = tr.vecEndPos;
-	Vector vecEnd;
-
-	distance = 1e6f;
-
-	vecHullEnd = vecSrc + ((vecHullEnd - vecSrc) * 2);
-	UTIL_TraceLine(vecSrc, vecHullEnd, dont_ignore_monsters, pEntity, &tmpTrace);
-	if (tmpTrace.flFraction < 1.0)
-	{
-		tr = tmpTrace;
-		return;
-	}
-
-	for (i = 0; i < 2; i++)
-	{
-		for (j = 0; j < 2; j++)
-		{
-			for (k = 0; k < 2; k++)
-			{
-				vecEnd.x = vecHullEnd.x + minmaxs[i][0];
-				vecEnd.y = vecHullEnd.y + minmaxs[j][1];
-				vecEnd.z = vecHullEnd.z + minmaxs[k][2];
-
-				UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, pEntity, &tmpTrace);
-				if (tmpTrace.flFraction < 1.0)
-				{
-					float thisDistance = (tmpTrace.vecEndPos - vecSrc).Length();
-					if (thisDistance < distance)
-					{
-						tr = tmpTrace;
-						distance = thisDistance;
-					}
-				}
-			}
-		}
-	}
 }
 
 void CCrowbar::PrimaryAttack()
@@ -186,15 +119,18 @@ int CCrowbar::Swing(int fFirst)
 			// This is and approximation of the "best" intersection
 			CBaseEntity *pHit = CBaseEntity::Instance(tr.pHit);
 			if (!pHit || pHit->IsBSPModel())
-				FindHullIntersection(vecSrc, tr, VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX, m_pPlayer->edict());
+				UTIL_FindHullIntersection(vecSrc, tr, VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX, m_pPlayer->edict());
 			vecEnd = tr.vecEndPos; // This is the point on the actual surface (the hull could have hit space)
 		}
 	}
 #endif
 
-	PLAYBACK_EVENT_FULL(FEV_NOTHOST, m_pPlayer->edict(), m_usCrowbar,
-	    0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0, 0, 0,
-	    0.0, 0, 0.0);
+	if (fFirst)
+	{
+		PLAYBACK_EVENT_FULL(FEV_NOTHOST, m_pPlayer->edict(), m_usCrowbar,
+		    0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0, 0, 0,
+		    0.0, 0, 0.0);
+	}
 
 	if (tr.flFraction >= 1.0)
 	{
@@ -225,8 +161,6 @@ int CCrowbar::Swing(int fFirst)
 		// player "shoot" animation
 		m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-		m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.25;
-
 #ifndef CLIENT_DLL
 
 		// hit
@@ -247,6 +181,11 @@ int CCrowbar::Swing(int fFirst)
 		}
 		ApplyMultiDamage(m_pPlayer->pev, m_pPlayer->pev);
 
+#endif
+
+		m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.25;
+
+#ifndef CLIENT_DLL
 		// play thwack, smack, or dong sound
 		float flVol = 1.0;
 		int fHitWorld = TRUE;
@@ -315,4 +254,32 @@ int CCrowbar::Swing(int fFirst)
 		pev->nextthink = UTIL_WeaponTimeBase() + 0.2;
 	}
 	return fDidHit;
+}
+
+void CCrowbar::WeaponIdle(void)
+{
+	if (m_flTimeWeaponIdle < UTIL_WeaponTimeBase())
+	{
+		int iAnim;
+		float flRand = UTIL_SharedRandomFloat(m_pPlayer->random_seed, 0, 1);
+		if (flRand > 0.9f)
+		{
+			iAnim = CROWBAR_IDLE2;
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 160.0f / 30.0f;
+		}
+		else
+		{
+			if (flRand > 0.5f)
+			{
+				iAnim = CROWBAR_IDLE;
+				m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 70.0f / 25.0f;
+			}
+			else
+			{
+				iAnim = CROWBAR_IDLE3;
+				m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 160.0f / 30.0f;
+			}
+		}
+		SendWeaponAnim(iAnim);
+	}
 }

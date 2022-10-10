@@ -2713,6 +2713,7 @@ void PM_Jump(void)
 			}
 
 			pmove->velocity[2] = sqrt(2 * 800 * 56.0);
+			pmove->PM_PlaySound(CHAN_STATIC, "ctf/pow_big_jump.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
 		}
 		else
 		{

@@ -237,6 +237,13 @@ void CEgon::PrimaryAttack(void)
 	Attack();
 }
 
+void CEgon::SecondaryAttack(void)
+{
+	m_fireMode = FIRE_WIDE;
+	Attack();
+}
+
+
 void CEgon::Fire(const Vector &vecOrigSrc, const Vector &vecDir)
 {
 	Vector vecDest = vecOrigSrc + vecDir * 8192;

@@ -2519,3 +2519,79 @@ int CRestore::BufferCheckZString(const char *string)
 	}
 	return 0;
 }
+
+void UTIL_CleanSpawnPoint(Vector origin, float dist)
+{
+	CBaseEntity *ent = NULL;
+	while ((ent = UTIL_FindEntityInSphere(ent, origin, dist)) != NULL)
+	{
+		if (ent->IsPlayer())
+		{
+			TraceResult tr;
+			UTIL_TraceHull(ent->pev->origin + Vector(0, 0, 36), ent->pev->origin + Vector(RANDOM_FLOAT(-150, 150), RANDOM_FLOAT(-150, 150), 0), dont_ignore_monsters, human_hull, ent->edict(), &tr);
+			//UTIL_TraceModel( ent->pev->origin + Vector( 0, 0, 36 ), ent->pev->origin + Vector( RANDOM_FLOAT( -150, 150 ), RANDOM_FLOAT( -150, 150 ), 0 ), 0, ent->edict(), &tr );
+			if (!tr.fAllSolid)
+				UTIL_SetOrigin(ent->pev, tr.vecEndPos);
+		}
+	}
+}
+
+void UTIL_MuzzleLight(Vector vecSrc, float flRadius, byte r, byte g, byte b, float flTime, float flDecay)
+{
+	MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, vecSrc);
+	WRITE_BYTE(TE_DLIGHT);
+	WRITE_COORD(vecSrc.x); // X
+	WRITE_COORD(vecSrc.y); // Y
+	WRITE_COORD(vecSrc.z); // Z
+	WRITE_BYTE(flRadius * 0.1f); // radius * 0.1
+	WRITE_BYTE(r); // r
+	WRITE_BYTE(g); // g
+	WRITE_BYTE(b); // b
+	WRITE_BYTE(flTime * 10.0f); // time * 10
+	WRITE_BYTE(flDecay * 0.1f); // decay * 0.1
+	MESSAGE_END();
+}
+
+void UTIL_FindHullIntersection(const Vector &vecSrc, TraceResult &tr, float *mins, float *maxs, edict_t *pEntity)
+{
+	int i, j, k;
+	float distance;
+	float *minmaxs[2] = { mins, maxs };
+	TraceResult tmpTrace;
+	Vector vecHullEnd = tr.vecEndPos;
+	Vector vecEnd;
+
+	distance = 1e6f;
+
+	vecHullEnd = vecSrc + ((vecHullEnd - vecSrc) * 2);
+	UTIL_TraceLine(vecSrc, vecHullEnd, dont_ignore_monsters, pEntity, &tmpTrace);
+	if (tmpTrace.flFraction < 1.0)
+	{
+		tr = tmpTrace;
+		return;
+	}
+
+	for (i = 0; i < 2; i++)
+	{
+		for (j = 0; j < 2; j++)
+		{
+			for (k = 0; k < 2; k++)
+			{
+				vecEnd.x = vecHullEnd.x + minmaxs[i][0];
+				vecEnd.y = vecHullEnd.y + minmaxs[j][1];
+				vecEnd.z = vecHullEnd.z + minmaxs[k][2];
+
+				UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, pEntity, &tmpTrace);
+				if (tmpTrace.flFraction < 1.0)
+				{
+					float thisDistance = (tmpTrace.vecEndPos - vecSrc).Length();
+					if (thisDistance < distance)
+					{
+						tr = tmpTrace;
+						distance = thisDistance;
+					}
+				}
+			}
+		}
+	}
+}

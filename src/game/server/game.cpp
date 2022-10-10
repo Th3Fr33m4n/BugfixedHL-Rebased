@@ -464,6 +464,58 @@ cvar_t sk_player_leg1 = { "sk_player_leg1", "1" };
 cvar_t sk_player_leg2 = { "sk_player_leg2", "1" };
 cvar_t sk_player_leg3 = { "sk_player_leg3", "1" };
 
+//op4 weapons
+
+cvar_t sk_plr_pipewrench1 = { "sk_plr_pipewrench1", "0" };
+cvar_t sk_plr_pipewrench2 = { "sk_plr_pipewrench2", "0" };
+cvar_t sk_plr_pipewrench3 = { "sk_plr_pipewrench3", "0" };
+
+cvar_t sk_plr_knife1 = { "sk_plr_knife1", "0" };
+cvar_t sk_plr_knife2 = { "sk_plr_knife2", "0" };
+cvar_t sk_plr_knife3 = { "sk_plr_knife3", "0" };
+
+cvar_t sk_plr_grapple1 = { "sk_plr_grapple1", "0" };
+cvar_t sk_plr_grapple2 = { "sk_plr_grapple2", "0" };
+cvar_t sk_plr_grapple3 = { "sk_plr_grapple3", "0" };
+
+cvar_t sk_plr_eagle1 = { "sk_plr_eagle1", "0" };
+cvar_t sk_plr_eagle2 = { "sk_plr_eagle2", "0" };
+cvar_t sk_plr_eagle3 = { "sk_plr_eagle3", "0" };
+
+cvar_t sk_plr_762_bullet1 = { "sk_plr_762_bullet1", "0" };
+cvar_t sk_plr_762_bullet2 = { "sk_plr_762_bullet2", "0" };
+cvar_t sk_plr_762_bullet3 = { "sk_plr_762_bullet3", "0" };
+
+cvar_t sk_plr_556_bullet1 = { "sk_plr_556_bullet1", "0" };
+cvar_t sk_plr_556_bullet2 = { "sk_plr_556_bullet2", "0" };
+cvar_t sk_plr_556_bullet3 = { "sk_plr_556_bullet3", "0" };
+
+cvar_t sk_plr_displacer_self1 = { "sk_plr_displacer_self1", "0" };
+cvar_t sk_plr_displacer_self2 = { "sk_plr_displacer_self2", "0" };
+cvar_t sk_plr_displacer_self3 = { "sk_plr_displacer_self3", "0" };
+
+cvar_t sk_plr_displacer_other1 = { "sk_plr_displacer_other1", "0" };
+cvar_t sk_plr_displacer_other2 = { "sk_plr_displacer_other2", "0" };
+cvar_t sk_plr_displacer_other3 = { "sk_plr_displacer_other3", "0" };
+
+cvar_t sk_plr_displacer_radius1 = { "sk_plr_displacer_radius1", "0" };
+cvar_t sk_plr_displacer_radius2 = { "sk_plr_displacer_radius2", "0" };
+cvar_t sk_plr_displacer_radius3 = { "sk_plr_displacer_radius3", "0" };
+
+cvar_t sk_plr_shockroachs1 = { "sk_plr_shockroachs1", "0" };
+cvar_t sk_plr_shockroachs2 = { "sk_plr_shockroachs2", "0" };
+cvar_t sk_plr_shockroachs3 = { "sk_plr_shockroachs3", "0" };
+
+cvar_t sk_plr_shockroachm1 = { "sk_plr_shockroachm1", "0" };
+cvar_t sk_plr_shockroachm2 = { "sk_plr_shockroachm2", "0" };
+cvar_t sk_plr_shockroachm3 = { "sk_plr_shockroachm3", "0" };
+
+cvar_t sk_plr_spore1 = { "sk_plr_spore1", "0" };
+cvar_t sk_plr_spore2 = { "sk_plr_spore2", "0" };
+cvar_t sk_plr_spore3 = { "sk_plr_spore3", "0" };
+
+
+
 // END Cvars for Skill Level settings
 
 // Register your console variables here
@@ -907,6 +959,55 @@ void GameDLLInit(void)
 	CVAR_REGISTER(&sk_player_leg1);
 	CVAR_REGISTER(&sk_player_leg2);
 	CVAR_REGISTER(&sk_player_leg3);
+
+	// op4 Weapons
+	CVAR_REGISTER(&sk_plr_pipewrench1); // { "sk_plr_pipewrench1", "0" };
+	CVAR_REGISTER(&sk_plr_pipewrench2); // { "sk_plr_pipewrench2", "0" };
+	CVAR_REGISTER(&sk_plr_pipewrench3); // { "sk_plr_pipewrench3", "0" };
+
+	CVAR_REGISTER(&sk_plr_knife1); // { "sk_plr_knife1", "0" };
+	CVAR_REGISTER(&sk_plr_knife2); // { "sk_plr_knife2", "0" };
+	CVAR_REGISTER(&sk_plr_knife3); // { "sk_plr_knife3", "0" };
+
+	CVAR_REGISTER(&sk_plr_grapple1); // { "sk_plr_grapple1", "0" };
+	CVAR_REGISTER(&sk_plr_grapple2); // { "sk_plr_grapple2", "0" };
+	CVAR_REGISTER(&sk_plr_grapple3); // { "sk_plr_grapple3", "0" };
+
+	CVAR_REGISTER(&sk_plr_eagle1); // { "sk_plr_eagle1", "0" };
+	CVAR_REGISTER(&sk_plr_eagle2); // { "sk_plr_eagle2", "0" };
+	CVAR_REGISTER(&sk_plr_eagle3); // { "sk_plr_eagle3", "0" };
+
+	CVAR_REGISTER(&sk_plr_762_bullet1); // { "sk_plr_762_bullet1", "0" };
+	CVAR_REGISTER(&sk_plr_762_bullet2); // { "sk_plr_762_bullet2", "0" };
+	CVAR_REGISTER(&sk_plr_762_bullet3); // { "sk_plr_762_bullet3", "0" };
+
+	CVAR_REGISTER(&sk_plr_556_bullet1); // { "sk_plr_556_bullet1", "0" };
+	CVAR_REGISTER(&sk_plr_556_bullet2); // { "sk_plr_556_bullet2", "0" };
+	CVAR_REGISTER(&sk_plr_556_bullet3); // { "sk_plr_556_bullet3", "0" };
+
+	CVAR_REGISTER(&sk_plr_displacer_self1); // { "sk_plr_displacer_self1", "0" };
+	CVAR_REGISTER(&sk_plr_displacer_self2); // { "sk_plr_displacer_self2", "0" };
+	CVAR_REGISTER(&sk_plr_displacer_self3); // { "sk_plr_displacer_self3", "0" };
+
+	CVAR_REGISTER(&sk_plr_displacer_other1); // { "sk_plr_displacer_other1", "0" };
+	CVAR_REGISTER(&sk_plr_displacer_other2); // { "sk_plr_displacer_other2", "0" };
+	CVAR_REGISTER(&sk_plr_displacer_other3); // { "sk_plr_displacer_other3", "0" };
+
+	CVAR_REGISTER(&sk_plr_displacer_radius1); // { "sk_plr_displacer_radius1", "0" };
+	CVAR_REGISTER(&sk_plr_displacer_radius2); // { "sk_plr_displacer_radius2", "0" };
+	CVAR_REGISTER(&sk_plr_displacer_radius3); // { "sk_plr_displacer_radius3", "0" };
+
+	CVAR_REGISTER(&sk_plr_shockroachs1); // { "sk_plr_shockroachs1", "0" };
+	CVAR_REGISTER(&sk_plr_shockroachs2); // { "sk_plr_shockroachs2", "0" };
+	CVAR_REGISTER(&sk_plr_shockroachs3); // { "sk_plr_shockroachs3", "0" };
+
+	CVAR_REGISTER(&sk_plr_shockroachm1); // { "sk_plr_shockroachm1", "0" };
+	CVAR_REGISTER(&sk_plr_shockroachm2); // { "sk_plr_shockroachm2", "0" };
+	CVAR_REGISTER(&sk_plr_shockroachm3); // { "sk_plr_shockroachm3", "0" };
+
+	CVAR_REGISTER(&sk_plr_spore1); // { "sk_plr_spore1", "0" };
+	CVAR_REGISTER(&sk_plr_spore2); // { "sk_plr_spore2", "0" };
+	CVAR_REGISTER(&sk_plr_spore3); // { "sk_plr_spore3", "0" };
 	// END REGISTER CVARS FOR SKILL LEVEL STUFF
 
 	// Register cvars from ConVar class

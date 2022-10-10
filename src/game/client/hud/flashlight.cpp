@@ -37,7 +37,7 @@ void CHudFlashlight::Init(void)
 	m_fFade = 0;
 	m_fOn = 0;
 
-	HookMessage<&CHudFlashlight::MsgFunc_Flashlight>("Flashlight");
+	//HookMessage<&CHudFlashlight::MsgFunc_Flashlight>("Flashlight");
 	HookMessage<&CHudFlashlight::MsgFunc_FlashBat>("FlashBat");
 
 	m_iFlags |= HUD_ACTIVE;

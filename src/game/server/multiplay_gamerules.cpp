@@ -190,6 +190,39 @@ void CHalfLifeMultiplay::RefreshSkillData(void)
 	// gauss
 	gSkillData.plrDmgGauss = mp_dmg_gauss_primary.value;
 	gSkillData.plrDmgGaussSecondary = mp_dmg_gauss_secondary.value;
+
+	// Pipe wrench
+	gSkillData.plrDmgPWrench = 20;
+
+	// Knife
+	gSkillData.plrDmgKnife = 10;
+
+	// Grapple
+	gSkillData.plrDmgGrapple = 25;
+
+	// Eagle
+	gSkillData.plrDmgEagle = 34;
+
+	// Displacer player damage
+	gSkillData.plrDmgDisplacer = 250;
+
+	// Shockroach
+	gSkillData.plrDmgShockroachSingleplayer = 10;
+
+	// Spore
+	gSkillData.plrDmgSpore = 50;
+
+	// 762
+	gSkillData.plrDmg762 = 100;
+
+	// 556
+	gSkillData.plrDmg556 = 15;
+
+	// Shockroach
+	gSkillData.plrDmgShockroachMultiplayer = 15;
+
+	// Displacer radius
+	gSkillData.plrDisplacerRadius = 300;
 }
 
 // longest the intermission can last, in seconds

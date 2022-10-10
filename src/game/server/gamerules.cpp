@@ -302,6 +302,19 @@ void CGameRules::RefreshSkillData(void)
 	gSkillData.plrStomach = GetSkillCvar("sk_player_stomach");
 	gSkillData.plrLeg = GetSkillCvar("sk_player_leg");
 	gSkillData.plrArm = GetSkillCvar("sk_player_arm");
+
+	//gearbox weapons
+	gSkillData.plrDmgPWrench = GetSkillCvar("sk_plr_pipewrench");
+	gSkillData.plrDmgKnife = GetSkillCvar("sk_plr_knife");
+	gSkillData.plrDmgGrapple = GetSkillCvar("sk_plr_grapple");
+	gSkillData.plrDmgEagle = GetSkillCvar("sk_plr_eagle");
+	gSkillData.plrDmgDisplacer = GetSkillCvar("sk_plr_displacer_other");
+	gSkillData.plrDisplacerRadius = GetSkillCvar("sk_plr_displacer_radius");
+	gSkillData.plrDmgShockroachSingleplayer = GetSkillCvar("sk_plr_shockroachs");
+	gSkillData.plrDmgShockroachMultiplayer = GetSkillCvar("sk_plr_shockroachm");
+	gSkillData.plrDmgSpore = GetSkillCvar("sk_plr_spore");
+	gSkillData.plrDmg762 = GetSkillCvar("sk_plr_762_bullet");
+	gSkillData.plrDmg556 = GetSkillCvar("sk_plr_556_bullet");
 }
 
 //=========================================================

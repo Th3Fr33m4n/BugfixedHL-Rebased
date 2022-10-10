@@ -947,6 +947,8 @@ void ClientPrecache(void)
 	PRECACHE_SOUND("player/geiger2.wav");
 	PRECACHE_SOUND("player/geiger1.wav");
 
+	PRECACHE_SOUND("ctf/pow_big_jump.wav");
+
 	if (giPrecacheGrunt)
 		UTIL_PrecacheOther("monster_human_grunt");
 }
@@ -1231,6 +1233,12 @@ int AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, edict_t *ho
 
 	state->skin = ent->v.skin;
 	state->effects = ent->v.effects;
+
+	//opfor nvg fix
+	if (player && host != ent)
+	{
+		state->effects &= ~EF_BRIGHTLIGHT;
+	}
 
 	// This non-player entity is being moved by the game .dll and not the physics simulation system
 	//  make sure that we interpolate it's position on the client if it moves
@@ -1802,6 +1810,22 @@ void UpdateClientData(const struct edict_s *ent, int sendweapons, struct clientd
 					{
 						cd->vuser2.y = ((CRpg *)pl->m_pActiveItem)->m_fSpotActive;
 						cd->vuser2.z = ((CRpg *)pl->m_pActiveItem)->m_cActiveRockets;
+					}
+					else if (pl->m_pActiveItem->m_iId == WEAPON_M249)
+					{
+						cd->vuser2.y = pl->ammo_556;
+					}
+					else if (pl->m_pActiveItem->m_iId == WEAPON_SHOCKRIFLE)
+					{
+						cd->vuser2.y = pl->ammo_shocks;
+					}
+					else if (pl->m_pActiveItem->m_iId == WEAPON_SNIPERRIFLE)
+					{
+						cd->vuser2.y = pl->ammo_762;
+					}
+					else if (pl->m_pActiveItem->m_iId == WEAPON_SPORELAUNCHER)
+					{
+						cd->vuser2.y = pl->ammo_spores;
 					}
 				}
 			}

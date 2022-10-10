@@ -28,6 +28,8 @@
 
 extern BEAM *pBeam;
 extern BEAM *pBeam2;
+extern TEMPENTITY *pFlare;
+
 void HUD_GetLastOrg(float *org);
 
 void UpdateBeams(void)
@@ -48,7 +50,7 @@ void UpdateBeams(void)
 
 	VectorCopy(origin, vecSrc);
 
-	VectorMA(vecSrc, 2048, forward, vecEnd);
+	VectorMA(vecSrc, 8192, forward, vecEnd);
 
 	gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction(false, true);
 
@@ -74,6 +76,28 @@ void UpdateBeams(void)
 		pBeam2->target = tr.endpos;
 		pBeam2->die = gEngfuncs.GetClientTime() + 0.1; // We keep it alive just a little bit forward in the future, just in case.
 	}
+
+	if (pFlare) // Vit_amiN: beam flare
+	{
+		pFlare->entity.origin = tr.endpos;
+		pFlare->die = gEngfuncs.GetClientTime() + 0.1f; // We keep it alive just a little bit forward in the future, just in case.
+
+		/* if (gEngfuncs.GetMaxClients() != 1) // Singleplayer always draws the egon's energy beam flare
+		{
+			pFlare->flags |= FTENT_NOMODEL;
+
+			if (!(0 != tr.allsolid || tr.ent <= 0 || tr.fraction == 1.0f)) // Beam hit some non-world entity
+			{
+				physent_t *pEntity = gEngfuncs.pEventAPI->EV_GetPhysent(tr.ent);
+
+				// Not the world, let's assume that we hit something organic ( dog, cat, uncle joe, etc )
+				if (pEntity && !(pEntity->solid == SOLID_BSP || pEntity->movetype == MOVETYPE_PUSHSTEP))
+				{
+					pFlare->flags &= ~FTENT_NOMODEL;
+				}
+			}
+		}*/
+	}
 }
 
 /*
@@ -85,6 +109,6 @@ Add game specific, client-side objects here
 */
 void Game_AddObjects(void)
 {
-	if (pBeam && pBeam2)
+	if (pBeam && pBeam2 && pFlare)
 		UpdateBeams();
 }

@@ -110,7 +110,7 @@ int CMP5::GetItemInfo(ItemInfo *p)
 
 	return 1;
 }
-
+/*
 int CMP5::AddToPlayer(CBasePlayer *pPlayer)
 {
 	if (CBasePlayerWeapon::AddToPlayer(pPlayer))
@@ -119,7 +119,7 @@ int CMP5::AddToPlayer(CBasePlayer *pPlayer)
 		return TRUE;
 	}
 	return FALSE;
-}
+}*/
 
 BOOL CMP5::Deploy()
 {

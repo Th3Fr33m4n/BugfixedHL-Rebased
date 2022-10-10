@@ -267,15 +267,21 @@ void CGauss::SecondaryAttack()
 		if (m_iSoundState == 0)
 			ALERT(at_console, "sound state %d\n", m_iSoundState);
 
-		PLAYBACK_EVENT_FULL(FEV_NOTHOST, m_pPlayer->edict(), m_usGaussSpin, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, pitch, 0, (m_iSoundState == SND_CHANGE_PITCH) ? 1 : 0, 0);
+		const bool overcharge = m_pPlayer->m_flStartCharge < gpGlobals->time - 10.0f;
+
+		if (!overcharge)
+		{
+			PLAYBACK_EVENT_FULL(FEV_NOTHOST, m_pPlayer->edict(), m_usGaussSpin, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, pitch, 0, (m_iSoundState == SND_CHANGE_PITCH) ? 1 : 0, 0);
+		}
 
 		m_iSoundState = SND_CHANGE_PITCH; // hack for going through level transitions
 
 		m_pPlayer->m_iWeaponVolume = GAUSS_PRIMARY_CHARGE_VOLUME;
 
 		// m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.1;
-		if (m_pPlayer->m_flStartCharge < gpGlobals->time - 10)
+		if (overcharge)
 		{
+			PLAYBACK_EVENT_FULL(FEV_NOTHOST, m_pPlayer->edict(), m_usGaussSpin, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, pitch, 0, 0, 1);
 			// Player charged up too long. Zap him.
 			EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/electro4.wav", 1.0, ATTN_NORM, 0, 80 + RANDOM_LONG(0, 0x3f));
 			EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/electro6.wav", 1.0, ATTN_NORM, 0, 75 + RANDOM_LONG(0, 0x3f));
@@ -615,8 +621,6 @@ void CGauss::WeaponIdle(void)
 			iAnim = GAUSS_FIDGET;
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 3;
 		}
-
-		return;
 		SendWeaponAnim(iAnim);
 	}
 }

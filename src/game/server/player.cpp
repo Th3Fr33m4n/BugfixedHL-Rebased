@@ -195,6 +195,8 @@ int gmsgViewMode = 0;
 int gmsgVGUIMenu = 0;
 int gmsgStatusIcon = 0;
 
+int gmsgNightvision = 0;
+
 const char *const gCustomMessages[] = {
 	"IconInfo",
 	"CheatCheck",
@@ -257,6 +259,8 @@ void LinkUserMessages(void)
 	gmsgViewMode = REG_USER_MSG("ViewMode", 0); // Switches client to first person mode
 	gmsgVGUIMenu = REG_USER_MSG("VGUIMenu", 1); // Opens team selection menu with map briefing
 	gmsgStatusIcon = REG_USER_MSG("StatusIcon", -1); // Displays specified status icon sprite in hud
+
+	gmsgNightvision = REG_USER_MSG("Nightvision", 1);
 
 	// Register messages from some custom mods to prevent "Host_Error: UserMsg: Not Present on Client"
 	for (int i = 0; gCustomMessages[i] != NULL; i++)
@@ -1019,7 +1023,13 @@ void CBasePlayer::SetAnimation(PLAYER_ANIM playerAnim)
 		break;
 	case PLAYER_IDLE:
 	case PLAYER_WALK:
-		if (!FBitSet(pev->flags, FL_ONGROUND) && (m_Activity == ACT_HOP || m_Activity == ACT_LEAP)) // Still jumping
+		if ((m_afPhysicsFlags & PFLAG_LATCHING) && (pev->velocity.Length() > 100))
+		{
+			ASSERT((m_pActiveItem && FClassnameIs(m_pActiveItem->pev, "weapon_grapple")) == TRUE);
+
+			m_IdealActivity = ACT_SWIM;
+		}
+		else if (!FBitSet(pev->flags, FL_ONGROUND) && (m_Activity == ACT_HOP || m_Activity == ACT_LEAP)) // Still jumping
 		{
 			m_IdealActivity = m_Activity;
 		}
@@ -1159,6 +1169,10 @@ void CBasePlayer::TabulateAmmo()
 	ammo_rockets = AmmoInventory(GetAmmoIndex("rockets"));
 	ammo_uranium = AmmoInventory(GetAmmoIndex("uranium"));
 	ammo_hornets = AmmoInventory(GetAmmoIndex("Hornets"));
+	ammo_556 = AmmoInventory(GetAmmoIndex("556"));
+	ammo_762 = AmmoInventory(GetAmmoIndex("762"));
+	ammo_shocks = AmmoInventory(GetAmmoIndex("Shocks"));
+	ammo_spores = AmmoInventory(GetAmmoIndex("spores"));
 }
 
 /*
@@ -1352,6 +1366,7 @@ void CBasePlayer::PlayerDeathThink(void)
 
 	pev->effects |= EF_NOINTERP;
 	pev->effects &= ~EF_DIMLIGHT;
+	pev->effects &= ~EF_BRIGHTLIGHT;
 
 	BOOL fAnyButtonDown = (m_afButtonPressed & ~IN_SCORE);
 	m_afButtonLast = pev->button;
@@ -3447,7 +3462,9 @@ CBaseEntity *FindEntityForward(CBaseEntity *pMe)
 
 BOOL CBasePlayer ::FlashlightIsOn(void)
 {
-	return FBitSet(pev->effects, EF_DIMLIGHT);
+	//opfor nightvision fix
+	//return FBitSet(pev->effects, EF_DIMLIGHT);
+	return FBitSet(pev->effects, EF_BRIGHTLIGHT);
 }
 
 void CBasePlayer ::FlashlightTurnOn(void)
@@ -3460,10 +3477,18 @@ void CBasePlayer ::FlashlightTurnOn(void)
 	if ((pev->weapons & (1 << WEAPON_SUIT)))
 	{
 		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, SOUND_FLASHLIGHT_ON, 1.0, ATTN_NORM, 0, PITCH_NORM);
-		SetBits(pev->effects, EF_DIMLIGHT);
+		//opfor nightvision fix
+		//SetBits(pev->effects, EF_DIMLIGHT);
+		SetBits(pev->effects, EF_BRIGHTLIGHT);
+		
 		MESSAGE_BEGIN(MSG_ONE, gmsgFlashlight, NULL, pev);
 		WRITE_BYTE(1);
 		WRITE_BYTE(m_iFlashBattery);
+		MESSAGE_END();
+
+		// Send Nightvision On message.
+		MESSAGE_BEGIN(MSG_ONE, gmsgNightvision, NULL, pev);
+		WRITE_BYTE(1);
 		MESSAGE_END();
 
 		m_flFlashLightTime = FLASH_DRAIN_TIME + gpGlobals->time;
@@ -3473,10 +3498,18 @@ void CBasePlayer ::FlashlightTurnOn(void)
 void CBasePlayer ::FlashlightTurnOff(void)
 {
 	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, SOUND_FLASHLIGHT_OFF, 1.0, ATTN_NORM, 0, PITCH_NORM);
-	ClearBits(pev->effects, EF_DIMLIGHT);
+	//opfor nightvision fix
+	//ClearBits(pev->effects, EF_DIMLIGHT);
+	ClearBits(pev->effects, EF_BRIGHTLIGHT);
+	
 	MESSAGE_BEGIN(MSG_ONE, gmsgFlashlight, NULL, pev);
 	WRITE_BYTE(0);
 	WRITE_BYTE(m_iFlashBattery);
+	MESSAGE_END();
+
+	// Send Nightvision Off message.
+	MESSAGE_BEGIN(MSG_ONE, gmsgNightvision, NULL, pev);
+	WRITE_BYTE(0);
 	MESSAGE_END();
 
 	m_flFlashLightTime = FLASH_CHARGE_TIME + gpGlobals->time;
@@ -3653,6 +3686,15 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 		GiveNamedItem("weapon_satchel");
 		GiveNamedItem("weapon_snark");
 		GiveNamedItem("weapon_hornetgun");
+		GiveNamedItem("weapon_pipewrench");
+		GiveNamedItem("weapon_knife");
+		GiveNamedItem("weapon_grapple");
+		GiveNamedItem("weapon_eagle");
+		GiveNamedItem("weapon_m249");
+		GiveNamedItem("weapon_sniperrifle");
+		GiveNamedItem("weapon_displacer");
+		GiveNamedItem("weapon_shockrifle");
+		GiveNamedItem("weapon_sporelauncher");
 #endif
 		gEvilImpulse101 = FALSE;
 		break;

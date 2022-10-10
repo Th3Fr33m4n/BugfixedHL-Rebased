@@ -137,6 +137,19 @@ struct skilldata_t
 	float plrStomach;
 	float plrLeg;
 	float plrArm;
+
+	// Player Weapons
+	float plrDmgPWrench;
+	float plrDmgKnife;
+	float plrDmgGrapple;
+	float plrDmgEagle;
+	float plrDmgDisplacer;
+	float plrDisplacerRadius;
+	float plrDmgShockroachSingleplayer;
+	float plrDmgShockroachMultiplayer;
+	float plrDmgSpore;
+	float plrDmg762;
+	float plrDmg556;
 };
 
 extern DLL_GLOBAL skilldata_t gSkillData;

@@ -75,7 +75,7 @@ public:
 	int MsgFunc_HideWeapon(const char *pszName, int iSize, void *pbuf);
 
 	int GetMaxClip(char *weaponname);
-	int GetMaxSlot() { return m_iMaxSlot; }
+	int GetMaxSlot() { return MAX_WEAPON_SLOTS - 1; }
 	void SlotInput(int iSlot);
 	void UserCmd_Slot1();
 	void UserCmd_Slot2();

@@ -299,7 +299,7 @@ void CHudAmmo::Reset(void)
 
 	//	VidInit();
 
-	m_iMaxSlot = 4;
+	m_iMaxSlot = GetMaxSlot();
 }
 
 void CHudAmmo::VidInit()

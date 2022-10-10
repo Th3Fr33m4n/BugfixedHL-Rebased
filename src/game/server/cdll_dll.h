@@ -24,8 +24,8 @@
 #define MAX_WEAPON_NAME 128
 
 #define MAX_WEAPON_POSITIONS 10 // this is the max number of weapon items in each bucket on a client
-#define MAX_WEAPON_SLOTS     6 // hud item selection slots on a client
-#define MAX_ITEM_TYPES       6 // weapont item slots on a server
+#define MAX_WEAPON_SLOTS     7 // hud item selection slots on a client
+#define MAX_ITEM_TYPES       7 // weapont item slots on a server
 
 #define MAX_ITEMS 5 // hard coded item types
 

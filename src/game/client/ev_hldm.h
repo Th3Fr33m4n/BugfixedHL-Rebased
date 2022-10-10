@@ -17,6 +17,9 @@ typedef enum
 	BULLET_PLAYER_357, // python
 	BULLET_PLAYER_BUCKSHOT, // shotgun
 	BULLET_PLAYER_CROWBAR, // crowbar swipe
+	BULLET_PLAYER_556, // m249
+	BULLET_PLAYER_762, // sniperrifle
+	BULLET_PLAYER_EAGLE, // desert eagle
 
 	BULLET_MONSTER_9MM,
 	BULLET_MONSTER_MP5,
