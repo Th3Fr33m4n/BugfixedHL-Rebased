@@ -565,6 +565,7 @@ add_sources( "${GAME_COMMON_SRCS}" )
 
 # Add in the sources
 add_subdirectory( src/game/server )
+add_subdirectory( src/game/server/gearbox )
 
 preprocess_sources()
 add_library( hl SHARED ${PREP_SRCS} )

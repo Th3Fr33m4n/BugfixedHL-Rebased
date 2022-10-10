@@ -30,6 +30,8 @@ add_sources(
 	menu.h
 	message.cpp
 	message.h
+	nightvision.cpp
+	nightvision.h
 	scores.cpp
 	scores.h
 	spectator.cpp

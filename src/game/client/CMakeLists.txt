@@ -89,6 +89,17 @@ add_sources(
 	../server/shotgun.cpp
 	../server/squeakgrenade.cpp
 	../server/tripmine.cpp
+
+	# OP4 Weapons
+	../server/gearbox/displacer.cpp
+	../server/gearbox/eagle.cpp
+	../server/gearbox/grapple.cpp
+	../server/gearbox/knife.cpp
+	../server/gearbox/m249.cpp
+	../server/gearbox/pipewrench.cpp
+	../server/gearbox/shockrifle.cpp
+	../server/gearbox/sniperrifle.cpp
+	../server/gearbox/sporelauncher.cpp
 )
 
 if( PLATFORM_WINDOWS )

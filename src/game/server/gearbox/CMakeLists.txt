@@ -1,0 +1,20 @@
+add_sources(
+	CMakeLists.txt
+	displacer.cpp
+	displacerball.h
+	eagle.cpp
+	grapple.cpp
+	grapple_tonguetip.cpp
+	grapple_tonguetip.h
+	knife.cpp
+	m249.cpp
+	pipewrench.cpp
+	shock.cpp
+	shock.h
+	shockrifle.cpp
+	sniperrifle.cpp
+	spore_ammo.cpp
+	sporegrenade.cpp
+	sporegrenade.h
+	sporelauncher.cpp
+)
