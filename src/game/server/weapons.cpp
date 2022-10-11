@@ -379,6 +379,7 @@ void EXPORT W_Precache(void)
 	UTIL_PrecacheOtherWeapon("weapon_displacer");
 	UTIL_PrecacheOtherWeapon("weapon_shockrifle");
 	UTIL_PrecacheOtherWeapon("weapon_sporelauncher");
+	UTIL_PrecacheOtherWeapon("weapon_penguin");
 
 	UTIL_PrecacheOther("ammo_556");
 	UTIL_PrecacheOther("ammo_762");

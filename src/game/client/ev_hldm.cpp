@@ -76,11 +76,11 @@ extern "C"
 	void EV_FireEagle(struct event_args_s *args);
 	void EV_Knife(struct event_args_s *args);
 	void EV_FireM249(struct event_args_s *args);
-	//void EV_PenguinFire(struct event_args_s *args);
 	void EV_PipeWrench(struct event_args_s *args);
 	void EV_ShockFire(struct event_args_s *args);
 	void EV_FireSniper(struct event_args_s *args);
 	void EV_SporeFire(struct event_args_s *args);
+	void EV_PenguinFire(struct event_args_s *args);
 
 	void EV_TrainPitchAdjust(struct event_args_s *args);
 }
@@ -1173,7 +1173,9 @@ enum crowbar_e
 	CROWBAR_ATTACK2MISS,
 	CROWBAR_ATTACK2HIT,
 	CROWBAR_ATTACK3MISS,
-	CROWBAR_ATTACK3HIT
+	CROWBAR_ATTACK3HIT,
+	CROWBAR_IDLE2,
+	CROWBAR_IDLE3
 };
 
 int g_iSwing;
@@ -2367,4 +2369,53 @@ void EV_SporeFire(event_args_t *args)
 }
 //======================
 //	   SPORELAUNCHER END
+//======================
+
+//======================
+//	   PENGUIN START
+//======================
+enum penguin_e
+{
+	PENGUIN_IDLE1 = 0,
+	PENGUIN_FIDGETFIT,
+	PENGUIN_FIDGETNIP,
+	PENGUIN_DOWN,
+	PENGUIN_UP,
+	PENGUIN_THROW
+};
+
+void EV_PenguinFire(event_args_t *args)
+{
+	int idx;
+	Vector vecSrc, angles, view_ofs, forward;
+	pmtrace_t tr;
+
+	idx = args->entindex;
+	VectorCopy(args->origin, vecSrc);
+	VectorCopy(args->angles, angles);
+
+	AngleVectors(angles, forward, NULL, NULL);
+
+	if (!EV_IsLocal(idx))
+		return;
+
+	if (args->ducking)
+		vecSrc = vecSrc - (VEC_HULL_MIN - VEC_DUCK_HULL_MIN);
+
+	// Store off the old count
+	gEngfuncs.pEventAPI->EV_PushPMStates();
+
+	// Now add in all of the players.
+	gEngfuncs.pEventAPI->EV_SetSolidPlayers(idx - 1);
+	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc + forward * 20, vecSrc + forward * 64, PM_NORMAL, -1, &tr);
+
+	//Find space to drop the thing.
+	if (tr.allsolid == 0 && tr.startsolid == 0 && tr.fraction > 0.25)
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(PENGUIN_THROW, 0);
+
+	gEngfuncs.pEventAPI->EV_PopPMStates();
+}
+//======================
+//	   PENGUIN END
 //======================

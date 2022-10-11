@@ -3695,6 +3695,7 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 		GiveNamedItem("weapon_displacer");
 		GiveNamedItem("weapon_shockrifle");
 		GiveNamedItem("weapon_sporelauncher");
+		GiveNamedItem("weapon_penguin");
 #endif
 		gEvilImpulse101 = FALSE;
 		break;

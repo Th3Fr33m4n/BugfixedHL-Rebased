@@ -91,6 +91,7 @@ public:
 #define WEAPON_SPORELAUNCHER 23
 #define WEAPON_SNIPERRIFLE  24
 #define WEAPON_KNIFE       25
+#define WEAPON_PENGUIN		26
 
 #define WEAPON_ALLWEAPONS (~(1 << WEAPON_SUIT))
 
@@ -124,6 +125,7 @@ public:
 #define DISPLACER_WEIGHT	20
 #define SHOCKRIFLE_WEIGHT    10
 #define SPORELAUNCHER_WEIGHT 10
+#define PENGUIN_WEIGHT       5
 
 // weapon clip/carry ammo capacities
 #define URANIUM_MAX_CARRY      100
@@ -142,6 +144,7 @@ public:
 #define _762_MAX_CARRY         15
 #define SHOCK_MAX_CARRY        10
 #define SPORE_MAX_CARRY        20
+#define PENGUIN_MAX_CARRY      9
 
 
 // the maximum amount of ammo each weapon's clip can hold
@@ -167,6 +170,7 @@ public:
 #define SNIPERRIFLE_MAX_CLIP 5
 #define SHOCKRIFLE_MAX_CLIP    10
 #define SPORELAUNCHER_MAX_CLIP 5
+#define PENGUIN_MAX_CLIP       WEAPON_NOCLIP
 
 // the default amount of ammo that comes with each gun when it spawns
 #define GLOCK_DEFAULT_GIVE       17
@@ -190,6 +194,7 @@ public:
 #define	DISPLACER_DEFAULT_GIVE	40
 #define SHOCKRIFLE_DEFAULT_GIVE    10
 #define SPORELAUNCHER_DEFAULT_GIVE 5
+#define PENGUIN_DEFAULT_GIVE       3
 
 // The amount of ammo given to a player by an ammo item.
 #define AMMO_URANIUMBOX_GIVE   20
@@ -206,6 +211,7 @@ public:
 #define AMMO_556CLIP_GIVE      50
 #define AMMO_762BOX_GIVE       5
 #define AMMO_SPORE_GIVE        1
+#define AMMO_PENGUINBOX_GIVE   3
 
 // bullet types
 typedef enum
@@ -1428,5 +1434,34 @@ public:
 private:
 	unsigned short m_usSporeFire;
 };
+
+class CPenguin : public CBasePlayerWeapon
+{
+public:
+	void Spawn(void);
+	void Precache(void);
+	int iItemSlot(void) { return 5; }
+	int GetItemInfo(ItemInfo *p);
+
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+	BOOL Deploy(void);
+	void Holster(int skiplocal = 0);
+	void WeaponIdle(void);
+	int m_fJustThrown;
+
+	virtual BOOL UseDecrement(void)
+	{
+#if CLIENT_WEAPONS
+		return TRUE;
+#else
+		return FALSE;
+#endif
+	}
+
+private:
+	unsigned short m_usPenguinFire;
+};
+
 
 #endif // WEAPONS_H

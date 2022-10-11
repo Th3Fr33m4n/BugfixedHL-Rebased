@@ -75,6 +75,7 @@ CSniperrifle g_M40a1;
 CDisplacer g_Displacer;
 CSporelauncher g_SporeLauncher;
 CShockrifle g_ShockRifle;
+CPenguin g_Penguin;
 
 /*
 ======================
@@ -642,6 +643,7 @@ void HUD_InitClientWeapons(void)
 	HUD_PrepEntity(&g_Displacer, &player);
 	HUD_PrepEntity(&g_SporeLauncher, &player);
 	HUD_PrepEntity(&g_ShockRifle, &player);
+	HUD_PrepEntity(&g_Penguin, &player);
 }
 
 /*
@@ -798,6 +800,9 @@ void HUD_WeaponsPostThink(local_state_s *from, local_state_s *to, usercmd_t *cmd
 	case WEAPON_SHOCKRIFLE:
 		pWeapon = &g_ShockRifle;
 		break;
+	case WEAPON_PENGUIN:
+		pWeapon = &g_Penguin;
+		break;
 	}
 
 	// Store pointer to our destination entity_state_t so we can get our origin, etc. from it
@@ -899,6 +904,8 @@ void HUD_WeaponsPostThink(local_state_s *from, local_state_s *to, usercmd_t *cmd
 	player.ammo_uranium = (int)from->client.ammo_cells;
 	player.ammo_hornets = (int)from->client.vuser2[0];
 	player.ammo_rockets = (int)from->client.ammo_rockets;
+	player.ammo_spores = (int)from->client.vuser2[1];
+	player.ammo_762 = (int)from->client.vuser2[2];
 
 	// Point to current weapon object
 	if (from->client.m_iId)
@@ -910,27 +917,6 @@ void HUD_WeaponsPostThink(local_state_s *from, local_state_s *to, usercmd_t *cmd
 	{
 		((CRpg *)player.m_pActiveItem)->m_fSpotActive = (int)from->client.vuser2[1];
 		((CRpg *)player.m_pActiveItem)->m_cActiveRockets = (int)from->client.vuser2[2];
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_EAGLE)
-	{
-		((CEagle *)player.m_pActiveItem)->m_fEagleLaserActive = (int)from->client.vuser2[1];
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_M249)
-	{
-		player.ammo_556 = (int)from->client.vuser2[1];
-		((CM249 *)player.m_pActiveItem)->m_iVisibleClip = (int)from->client.vuser2[2];
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_SHOCKRIFLE)
-	{
-		//player.ammo_shocks = (int)from->client.vuser2[1];
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_SNIPERRIFLE)
-	{
-		player.ammo_762 = (int)from->client.vuser2[1];
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_SPORELAUNCHER)
-	{
-		player.ammo_spores = (int)from->client.vuser2[1];
 	}
 
 	// Don't go firing anything if we have died or are spectating
@@ -994,34 +980,13 @@ void HUD_WeaponsPostThink(local_state_s *from, local_state_s *to, usercmd_t *cmd
 	to->client.vuser2[0] = player.ammo_hornets;
 	to->client.ammo_rockets = player.ammo_rockets;
 
+	to->client.vuser2.y = player.ammo_spores;
+	to->client.vuser2.z = player.ammo_762;
+
 	if (player.m_pActiveItem->m_iId == WEAPON_RPG)
 	{
 		to->client.vuser2[1] = ((CRpg *)player.m_pActiveItem)->m_fSpotActive;
 		to->client.vuser2[2] = ((CRpg *)player.m_pActiveItem)->m_cActiveRockets;
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_EAGLE)
-	{
-		to->client.vuser2[1] = ((CEagle *)player.m_pActiveItem)->m_fEagleLaserActive;
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_PIPEWRENCH)
-	{
-		//to->client.vuser2[1] = ((CPipeWrench *)player.m_pActiveItem)->m_iSwingMode;
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_M249)
-	{
-		to->client.vuser2[1] = player.ammo_556;
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_SHOCKRIFLE)
-	{
-		//to->client.vuser2[1] = player.ammo_shocks;
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_SNIPERRIFLE)
-	{
-		to->client.vuser2[1] = player.ammo_762;
-	}
-	else if (player.m_pActiveItem->m_iId == WEAPON_SPORELAUNCHER)
-	{
-		to->client.vuser2[1] = player.ammo_spores;
 	}
 
 	// Make sure that weapon animation matches what the game .dll is telling us

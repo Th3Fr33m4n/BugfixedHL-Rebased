@@ -100,6 +100,7 @@ add_sources(
 	../server/gearbox/shockrifle.cpp
 	../server/gearbox/sniperrifle.cpp
 	../server/gearbox/sporelauncher.cpp
+	../server/gearbox/penguin.cpp
 )
 
 if( PLATFORM_WINDOWS )

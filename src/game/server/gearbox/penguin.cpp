@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2001, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -12,7 +12,7 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#if !defined(OEM_BUILD) && !defined(HLDEMO_BUILD)
+#if !OEM_BUILD && !HLDEMO_BUILD
 
 #include "extdll.h"
 #include "util.h"
@@ -24,27 +24,27 @@
 #include "soundent.h"
 #include "gamerules.h"
 
-enum w_squeak_e
+enum w_penguin_e
 {
-	WSQUEAK_IDLE1 = 0,
-	WSQUEAK_FIDGET,
-	WSQUEAK_JUMP,
-	WSQUEAK_RUN,
+	WPENGUIN_IDLE1 = 0,
+	WPENGUIN_FIDGET,
+	WPENGUIN_JUMP,
+	WPENGUIN_RUN,
 };
 
-enum squeak_e
+enum penguin_e
 {
-	SQUEAK_IDLE1 = 0,
-	SQUEAK_FIDGETFIT,
-	SQUEAK_FIDGETNIP,
-	SQUEAK_DOWN,
-	SQUEAK_UP,
-	SQUEAK_THROW
+	PENGUIN_IDLE1 = 0,
+	PENGUIN_FIDGETFIT,
+	PENGUIN_FIDGETNIP,
+	PENGUIN_DOWN,
+	PENGUIN_UP,
+	PENGUIN_THROW
 };
 
-#ifndef CLIENT_DLL
+#if !CLIENT_DLL
 
-class CSqueakGrenade : public CGrenade
+class CPenguinGrenade : public CGrenade
 {
 	void Spawn(void);
 	void Precache(void);
@@ -72,28 +72,28 @@ class CSqueakGrenade : public CGrenade
 	int m_iMyClass;
 };
 
-float CSqueakGrenade::m_flNextBounceSoundTime = 0;
+float CPenguinGrenade::m_flNextBounceSoundTime = 0;
 
-LINK_ENTITY_TO_CLASS(monster_snark, CSqueakGrenade);
-TYPEDESCRIPTION CSqueakGrenade::m_SaveData[] = {
-	DEFINE_FIELD(CSqueakGrenade, m_flDie, FIELD_TIME),
-	DEFINE_FIELD(CSqueakGrenade, m_vecTarget, FIELD_VECTOR),
-	DEFINE_FIELD(CSqueakGrenade, m_flNextHunt, FIELD_TIME),
-	DEFINE_FIELD(CSqueakGrenade, m_flNextHit, FIELD_TIME),
-	DEFINE_FIELD(CSqueakGrenade, m_posPrev, FIELD_POSITION_VECTOR),
-	DEFINE_FIELD(CSqueakGrenade, m_hOwner, FIELD_EHANDLE),
+LINK_ENTITY_TO_CLASS(monster_penguin, CPenguinGrenade);
+TYPEDESCRIPTION CPenguinGrenade::m_SaveData[] = {
+	DEFINE_FIELD(CPenguinGrenade, m_flDie, FIELD_TIME),
+	DEFINE_FIELD(CPenguinGrenade, m_vecTarget, FIELD_VECTOR),
+	DEFINE_FIELD(CPenguinGrenade, m_flNextHunt, FIELD_TIME),
+	DEFINE_FIELD(CPenguinGrenade, m_flNextHit, FIELD_TIME),
+	DEFINE_FIELD(CPenguinGrenade, m_posPrev, FIELD_POSITION_VECTOR),
+	DEFINE_FIELD(CPenguinGrenade, m_hOwner, FIELD_EHANDLE),
 };
 
-IMPLEMENT_SAVERESTORE(CSqueakGrenade, CGrenade);
+IMPLEMENT_SAVERESTORE(CPenguinGrenade, CGrenade);
 
-#define SQUEEK_DETONATE_DELAY 15.0
+#define PENGUIN_DETONATE_DELAY 15.0
 
-int CSqueakGrenade ::Classify(void)
+int CPenguinGrenade::Classify(void)
 {
 	if (m_iMyClass != 0)
 		return m_iMyClass; // protect against recursion
 
-	if (m_hEnemy != NULL)
+	if (m_hEnemy != 0)
 	{
 		m_iMyClass = CLASS_INSECT; // no one cares about it
 		switch (m_hEnemy->Classify())
@@ -110,19 +110,19 @@ int CSqueakGrenade ::Classify(void)
 	return CLASS_ALIEN_BIOWEAPON;
 }
 
-void CSqueakGrenade ::Spawn(void)
+void CPenguinGrenade::Spawn(void)
 {
 	Precache();
 	// motor
 	pev->movetype = MOVETYPE_BOUNCE;
 	pev->solid = SOLID_BBOX;
 
-	SET_MODEL(ENT(pev), "models/w_squeak.mdl");
+	SET_MODEL(ENT(pev), "models/w_penguin.mdl");
 	UTIL_SetSize(pev, Vector(-4, -4, 0), Vector(4, 4, 8));
 	UTIL_SetOrigin(pev, pev->origin);
 
-	SetTouch(&CSqueakGrenade::SuperBounceTouch);
-	SetThink(&CSqueakGrenade::HuntThink);
+	SetTouch(&CPenguinGrenade::SuperBounceTouch);
+	SetThink(&CPenguinGrenade::HuntThink);
 	pev->nextthink = gpGlobals->time + 0.1;
 	m_flNextHunt = gpGlobals->time + 1E6;
 
@@ -132,9 +132,9 @@ void CSqueakGrenade ::Spawn(void)
 	pev->gravity = 0.5;
 	pev->friction = 0.5;
 
-	pev->dmg = gSkillData.snarkDmgPop;
+	pev->dmg = gSkillData.plrDmgHandGrenade;
 
-	m_flDie = gpGlobals->time + SQUEEK_DETONATE_DELAY;
+	m_flDie = gpGlobals->time + PENGUIN_DETONATE_DELAY;
 
 	m_flFieldOfView = 0; // 180 degrees
 
@@ -143,13 +143,13 @@ void CSqueakGrenade ::Spawn(void)
 
 	m_flNextBounceSoundTime = gpGlobals->time; // reset each time a snark is spawned.
 
-	pev->sequence = WSQUEAK_RUN;
+	pev->sequence = WPENGUIN_RUN;
 	ResetSequenceInfo();
 }
 
-void CSqueakGrenade::Precache(void)
+void CPenguinGrenade::Precache(void)
 {
-	PRECACHE_MODEL("models/w_squeak.mdl");
+	PRECACHE_MODEL("models/w_penguin.mdl");
 	PRECACHE_SOUND("squeek/sqk_blast1.wav");
 	PRECACHE_SOUND("common/bodysplat.wav");
 	PRECACHE_SOUND("squeek/sqk_die1.wav");
@@ -159,43 +159,22 @@ void CSqueakGrenade::Precache(void)
 	PRECACHE_SOUND("squeek/sqk_deploy1.wav");
 }
 
-void CSqueakGrenade ::Killed(entvars_t *pevAttacker, int iGib)
+void CPenguinGrenade::Killed(entvars_t *pevAttacker, int iGib)
 {
-	pev->model = iStringNull; // make invisible
-	SetThink(&CSqueakGrenade::SUB_Remove);
-	SetTouch(NULL);
-	pev->nextthink = gpGlobals->time + 0.1;
-
-	// since squeak grenades never leave a body behind, clear out their takedamage now.
-	// Squeaks do a bit of radius damage when they pop, and that radius damage will
-	// continue to call this function unless we acknowledge the Squeak's death now. (sjb)
-	pev->takedamage = DAMAGE_NO;
-
-	// play squeek blast
-	EMIT_SOUND_DYN(ENT(pev), CHAN_ITEM, "squeek/sqk_blast1.wav", 1, 0.5, 0, PITCH_NORM);
-
-	CSoundEnt::InsertSound(bits_SOUND_COMBAT, pev->origin, SMALL_EXPLOSION_VOLUME, 3.0);
-
-	UTIL_BloodDrips(pev->origin, g_vecZero, BloodColor(), 80);
-
-	if (m_hOwner != NULL)
-		RadiusDamage(pev, m_hOwner->pev, pev->dmg, CLASS_NONE, DMG_BLAST);
-	else
-		RadiusDamage(pev, pev, pev->dmg, CLASS_NONE, DMG_BLAST);
-
-	// reset owner so death message happens
-	if (m_hOwner != NULL)
+	if (m_hOwner != 0)
 		pev->owner = m_hOwner->edict();
-
-	CBaseMonster ::Killed(pevAttacker, GIB_ALWAYS);
+	CGrenade::Detonate();
+	UTIL_BloodDrips(pev->origin, g_vecZero, BloodColor(), 80);
+	if (m_hOwner != 0)
+		pev->owner = m_hOwner->edict();
 }
 
-void CSqueakGrenade ::GibMonster(void)
+void CPenguinGrenade::GibMonster(void)
 {
 	EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "common/bodysplat.wav", 0.75, ATTN_NORM, 0, 200);
 }
 
-void CSqueakGrenade::HuntThink(void)
+void CPenguinGrenade::HuntThink(void)
 {
 	// ALERT( at_console, "think\n" );
 
@@ -228,7 +207,7 @@ void CSqueakGrenade::HuntThink(void)
 		pev->velocity = pev->velocity * 0.9;
 		pev->velocity.z += 8.0;
 	}
-	else if (pev->movetype = MOVETYPE_FLY)
+	else if (pev->movetype == MOVETYPE_FLY)
 	{
 		pev->movetype = MOVETYPE_BOUNCE;
 	}
@@ -249,7 +228,7 @@ void CSqueakGrenade::HuntThink(void)
 
 	UTIL_MakeVectors(pev->angles);
 
-	if (m_hEnemy == NULL || !m_hEnemy->IsAlive())
+	if (m_hEnemy == 0 || !m_hEnemy->IsAlive())
 	{
 		// find target, bounce a bit towards it.
 		Look(512);
@@ -264,11 +243,11 @@ void CSqueakGrenade::HuntThink(void)
 	}
 
 	// higher pitch as squeeker gets closer to detonation time
-	float flpitch = 155.0 - 60.0 * ((m_flDie - gpGlobals->time) / SQUEEK_DETONATE_DELAY);
+	float flpitch = 155.0 - 60.0 * ((m_flDie - gpGlobals->time) / PENGUIN_DETONATE_DELAY);
 	if (flpitch < 80)
 		flpitch = 80;
 
-	if (m_hEnemy != NULL)
+	if (m_hEnemy != 0)
 	{
 		if (FVisible(m_hEnemy))
 		{
@@ -314,7 +293,7 @@ void CSqueakGrenade::HuntThink(void)
 	pev->angles.x = 0;
 }
 
-void CSqueakGrenade::SuperBounceTouch(CBaseEntity *pOther)
+void CPenguinGrenade::SuperBounceTouch(CBaseEntity *pOther)
 {
 	float flpitch;
 
@@ -335,7 +314,7 @@ void CSqueakGrenade::SuperBounceTouch(CBaseEntity *pOther)
 		return;
 
 	// higher pitch as squeeker gets closer to detonation time
-	flpitch = 155.0 - 60.0 * ((m_flDie - gpGlobals->time) / SQUEEK_DETONATE_DELAY);
+	flpitch = 155.0 - 60.0 * ((m_flDie - gpGlobals->time) / PENGUIN_DETONATE_DELAY);
 
 	if (pOther->pev->takedamage && m_flNextAttack < gpGlobals->time)
 	{
@@ -350,12 +329,13 @@ void CSqueakGrenade::SuperBounceTouch(CBaseEntity *pOther)
 				// ALERT( at_console, "hit enemy\n");
 				ClearMultiDamage();
 				pOther->TraceAttack(pev, gSkillData.snarkDmgBite, gpGlobals->v_forward, &tr, DMG_SLASH);
-				if (m_hOwner != NULL)
+				if (m_hOwner != 0)
 					ApplyMultiDamage(pev, m_hOwner->pev);
 				else
 					ApplyMultiDamage(pev, pev);
 
-				pev->dmg += gSkillData.snarkDmgPop; // add more explosion damage
+				pev->dmg += gSkillData.plrDmgHandGrenade; // add more explosion damage
+				pev->dmg = std::min(pev->dmg, 500.0f);
 				// m_flDie += 2.0; // add more life
 
 				// make bite sound
@@ -406,53 +386,53 @@ void CSqueakGrenade::SuperBounceTouch(CBaseEntity *pOther)
 
 #endif
 
-LINK_ENTITY_TO_CLASS(weapon_snark, CSqueak);
+LINK_ENTITY_TO_CLASS(weapon_penguin, CPenguin);
 
-void CSqueak::Spawn()
+void CPenguin::Spawn()
 {
 	Precache();
-	m_iId = WEAPON_SNARK;
-	SET_MODEL(ENT(pev), "models/w_sqknest.mdl");
+	m_iId = WEAPON_PENGUIN;
+	SET_MODEL(ENT(pev), "models/w_penguinnest.mdl");
 
 	FallInit(); //get ready to fall down.
 
-	m_iDefaultAmmo = SNARK_DEFAULT_GIVE;
+	m_iDefaultAmmo = PENGUIN_DEFAULT_GIVE;
 
 	pev->sequence = 1;
 	pev->animtime = gpGlobals->time;
 	pev->framerate = 1.0;
 }
 
-void CSqueak::Precache(void)
+void CPenguin::Precache(void)
 {
-	PRECACHE_MODEL("models/w_sqknest.mdl");
-	PRECACHE_MODEL("models/v_squeak.mdl");
-	PRECACHE_MODEL("models/p_squeak.mdl");
+	PRECACHE_MODEL("models/w_penguinnest.mdl");
+	PRECACHE_MODEL("models/v_penguin.mdl");
+	PRECACHE_MODEL("models/p_penguin.mdl");
 	PRECACHE_SOUND("squeek/sqk_hunt2.wav");
 	PRECACHE_SOUND("squeek/sqk_hunt3.wav");
-	UTIL_PrecacheOther("monster_snark");
+	UTIL_PrecacheOther("monster_penguin");
 
-	m_usSnarkFire = PRECACHE_EVENT(1, "events/snarkfire.sc");
+	m_usPenguinFire = PRECACHE_EVENT(1, "events/penguinfire.sc");
 }
 
-int CSqueak::GetItemInfo(ItemInfo *p)
+int CPenguin::GetItemInfo(ItemInfo *p)
 {
 	p->pszName = STRING(pev->classname);
-	p->pszAmmo1 = "Snarks";
-	p->iMaxAmmo1 = SNARK_MAX_CARRY;
+	p->pszAmmo1 = "Penguins";
+	p->iMaxAmmo1 = PENGUIN_MAX_CARRY;
 	p->pszAmmo2 = NULL;
 	p->iMaxAmmo2 = -1;
 	p->iMaxClip = WEAPON_NOCLIP;
 	p->iSlot = 4;
-	p->iPosition = 3;
-	p->iId = m_iId = WEAPON_SNARK;
-	p->iWeight = SNARK_WEIGHT;
+	p->iPosition = 4;
+	p->iId = m_iId = WEAPON_PENGUIN;
+	p->iWeight = PENGUIN_WEIGHT;
 	p->iFlags = ITEM_FLAG_LIMITINWORLD | ITEM_FLAG_EXHAUSTIBLE;
 
 	return 1;
 }
 
-BOOL CSqueak::Deploy()
+BOOL CPenguin::Deploy()
 {
 	// play hunt sound
 	float flRndSound = RANDOM_FLOAT(0, 1);
@@ -464,26 +444,26 @@ BOOL CSqueak::Deploy()
 
 	m_pPlayer->m_iWeaponVolume = QUIET_GUN_VOLUME;
 
-	return DefaultDeploy("models/v_squeak.mdl", "models/p_squeak.mdl", SQUEAK_UP, "squeak");
+	return DefaultDeploy("models/v_penguin.mdl", "models/p_penguin.mdl", PENGUIN_UP, "penguin");
 }
 
-void CSqueak::Holster(int skiplocal /* = 0 */)
+void CPenguin::Holster(int skiplocal /* = 0 */)
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 
-	EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "common/null.wav", 1.0, ATTN_NORM);
+	if (!m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType])
+	{
+		m_pPlayer->pev->weapons &= ~(1 << WEAPON_PENGUIN);
+		SetThink(&CPenguin::DestroyItem);
+		pev->nextthink = gpGlobals->time + 0.1;
+		return;
+	}
 
-	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] > 0)
-	{
-		SendWeaponAnim(SQUEAK_DOWN);
-	}
-	else
-	{
-		DestroyItem();
-	}
+	SendWeaponAnim(PENGUIN_DOWN);
+	EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "common/null.wav", 1.0, ATTN_NORM);
 }
 
-void CSqueak::PrimaryAttack()
+void CPenguin::PrimaryAttack()
 {
 	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType])
 	{
@@ -509,7 +489,7 @@ void CSqueak::PrimaryAttack()
 		flags = 0;
 #endif
 
-		PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), m_usSnarkFire, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, 0, 0, 0, 0);
+		PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), m_usPenguinFire, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, 0, 0, 0, 0);
 
 		if (tr.fAllSolid == 0 && tr.fStartSolid == 0 && tr.flFraction > 0.25)
 		{
@@ -517,7 +497,7 @@ void CSqueak::PrimaryAttack()
 			m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
 #ifndef CLIENT_DLL
-			CBaseEntity *pSqueak = CBaseEntity::Create("monster_snark", tr.vecEndPos, m_pPlayer->pev->v_angle, m_pPlayer->edict());
+			CBaseEntity *pSqueak = CBaseEntity::Create("monster_penguin", tr.vecEndPos, m_pPlayer->pev->v_angle, m_pPlayer->edict());
 			pSqueak->pev->velocity = gpGlobals->v_forward * 200 + m_pPlayer->pev->velocity;
 #endif
 
@@ -541,11 +521,11 @@ void CSqueak::PrimaryAttack()
 	}
 }
 
-void CSqueak::SecondaryAttack(void)
+void CPenguin::SecondaryAttack(void)
 {
 }
 
-void CSqueak::WeaponIdle(void)
+void CPenguin::WeaponIdle(void)
 {
 	if (m_flTimeWeaponIdle > UTIL_WeaponTimeBase())
 		return;
@@ -554,13 +534,13 @@ void CSqueak::WeaponIdle(void)
 	{
 		m_fJustThrown = 0;
 
-		if (m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()] <= 0)
+		if (!m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()])
 		{
 			RetireWeapon();
 			return;
 		}
 
-		SendWeaponAnim(SQUEAK_UP);
+		SendWeaponAnim(PENGUIN_UP);
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat(m_pPlayer->random_seed, 10, 15);
 		return;
 	}
@@ -569,17 +549,17 @@ void CSqueak::WeaponIdle(void)
 	float flRand = UTIL_SharedRandomFloat(m_pPlayer->random_seed, 0, 1);
 	if (flRand <= 0.75)
 	{
-		iAnim = SQUEAK_IDLE1;
+		iAnim = PENGUIN_IDLE1;
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 30.0 / 16 * (2);
 	}
 	else if (flRand <= 0.875)
 	{
-		iAnim = SQUEAK_FIDGETFIT;
+		iAnim = PENGUIN_FIDGETFIT;
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 70.0 / 16.0;
 	}
 	else
 	{
-		iAnim = SQUEAK_FIDGETNIP;
+		iAnim = PENGUIN_FIDGETNIP;
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 80.0 / 16.0;
 	}
 	SendWeaponAnim(iAnim);

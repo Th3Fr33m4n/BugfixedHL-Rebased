@@ -17,4 +17,5 @@ add_sources(
 	sporegrenade.cpp
 	sporegrenade.h
 	sporelauncher.cpp
+	penguin.cpp
 )
