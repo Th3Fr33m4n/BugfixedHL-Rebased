@@ -77,7 +77,7 @@ void CShock::FlyThink()
 	{
 		entvars_t *pevOwner = VARS(pev->owner);
 		EMIT_SOUND(ENT(pev), CHAN_VOICE, "weapons/shock_impact.wav", VOL_NORM, ATTN_NORM);
-		RadiusDamage(pev->origin, pev, pevOwner ? pevOwner : pev, pev->dmg * 3, 144, CLASS_NONE, DMG_SHOCK | DMG_ALWAYSGIB );
+		RadiusDamage(pev->origin, pev, pevOwner ? pevOwner : pev, pev->dmg * 5, 250, CLASS_NONE, DMG_SHOCK | DMG_ALWAYSGIB );
 		ClearEffects();
 		SetThink( &CBaseEntity::SUB_Remove );
 		pev->nextthink = gpGlobals->time;

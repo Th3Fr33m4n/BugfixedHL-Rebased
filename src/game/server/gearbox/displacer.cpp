@@ -127,16 +127,19 @@ void CDisplacerBall::ArmBeam( int iSide )
 	m_iBeams++;
 }
 
-void CDisplacerBall::Shoot(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, Vector vecAngles )
+void CDisplacerBall::Shoot(entvars_t *pevOwner, Vector vecStart, Vector vecAngles)
 {
 	CDisplacerBall *pSpit = GetClassPtr((CDisplacerBall *)NULL);
 	pSpit->Spawn();
 	UTIL_SetOrigin(pSpit->pev, vecStart);
-	pSpit->pev->velocity = vecVelocity;
-	pSpit->pev->angles = vecAngles;
+	Vector vecAnglesDef = vecAngles;
+	vecAnglesDef.x = -vecAnglesDef.x;
+	UTIL_MakeVectors(vecAngles);
+	pSpit->pev->velocity = gpGlobals->v_forward * 500;
+	pSpit->pev->angles = vecAnglesDef;
 	pSpit->pev->owner = ENT(pevOwner);
 }
-
+/*
 void CDisplacerBall::SelfCreate(entvars_t *pevOwner,Vector vecStart)
 {
 	CDisplacerBall *pSelf = GetClassPtr((CDisplacerBall *)NULL);
@@ -148,7 +151,7 @@ void CDisplacerBall::SelfCreate(entvars_t *pevOwner,Vector vecStart)
 	pSelf->SetTouch( NULL );
 	pSelf->SetThink(&CDisplacerBall::KillThink);
 	pSelf->pev->nextthink = gpGlobals->time + ( g_pGameRules->IsMultiplayer() ? 0.2f : 0.5f );
-}
+}*/
 
 void CDisplacerBall::Touch(CBaseEntity *pOther)
 {
@@ -176,7 +179,7 @@ void CDisplacerBall::Touch(CBaseEntity *pOther)
 			EMIT_SOUND( pPlayer->edict(), CHAN_BODY, "weapons/displacer_self.wav", 1, ATTN_NORM );
 
 			// make origin adjustments (origin in center, not at feet)
-			tmp.z -= pPlayer->pev->mins.z + 100;
+			tmp.z -= pPlayer->pev->mins.z + 37;
 			tmp.z++;
 
 			pPlayer->pev->flags &= ~FL_ONGROUND;
@@ -531,7 +534,7 @@ void CDisplacer::Displace( void )
 	EMIT_SOUND( edict(), CHAN_WEAPON, "weapons/displacer_fire.wav", 1, ATTN_NORM );
 
 	// player "shoot" animation
-        m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+    m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
 	m_pPlayer->pev->punchangle.x -= 2;
 #if !CLIENT_DLL
@@ -545,7 +548,7 @@ void CDisplacer::Displace( void )
 	vecSrc = vecSrc + gpGlobals->v_right	* 8;
 	vecSrc = vecSrc + gpGlobals->v_up		* -12;
 
-	CDisplacerBall::Shoot( m_pPlayer->pev, vecSrc, gpGlobals->v_forward * 500, m_pPlayer->pev->v_angle );
+	CDisplacerBall::Shoot(m_pPlayer->pev, vecSrc, m_pPlayer->pev->v_angle);
 
 	SetThink( NULL );
 #endif
@@ -593,9 +596,7 @@ void CDisplacer::Teleport( void )
 
 		EMIT_SOUND( m_pPlayer->edict(), CHAN_WEAPON, "weapons/displacer_self.wav", 1, ATTN_NORM );
 
-		UTIL_MakeVectors(m_pPlayer->pev->v_angle);
-
-		CDisplacerBall::Shoot(m_pPlayer->pev, m_pPlayer->pev->origin, gpGlobals->v_up * -500, m_pPlayer->pev->v_angle);
+		CDisplacerBall::Shoot(m_pPlayer->pev, m_pPlayer->pev->origin, Vector(90,0,0));
 	 	//CDisplacerBall::SelfCreate(m_pPlayer->pev, m_pPlayer->pev->origin);
 
 		// make origin adjustments (origin in center, not at feet)

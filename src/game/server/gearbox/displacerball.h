@@ -9,8 +9,8 @@ class CDisplacerBall : public CBaseEntity
 public:
 	void Spawn( void );
 
-	static void Shoot(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, Vector vecAngles);
-	static void SelfCreate(entvars_t *pevOwner, Vector vecStart);
+	static void Shoot(entvars_t *pevOwner, Vector vecStart, Vector vecAngles);
+	//static void SelfCreate(entvars_t *pevOwner, Vector vecStart);
 
 	void Touch(CBaseEntity *pOther);
 	void EXPORT ExplodeThink( void );
