@@ -13,7 +13,7 @@ from CreateMetadata import create_metadata
 
 
 # Also needs to be changed in CMakeLists.txt
-DEFAULT_VERSION = [1, 8, 0, 'dev', '']
+DEFAULT_VERSION = [1, 9, 1, 'dev', '']
 
 
 # ---------------------------------------------
@@ -45,6 +45,9 @@ class PlatformWindows:
         args.extend(['-T', self.script.vs_toolset])
 
         return args
+    
+    def get_cmake_build_args(self):
+        return ['--', '/p:VcpkgEnabled=false']
 
     def need_cmake_build_type_var(self):
         return False
@@ -78,6 +81,9 @@ class PlatformLinux:
         if toolchain_file:
             args.extend(['-DCMAKE_TOOLCHAIN_FILE={}cmake/{}'.format(self.script.repo_root, toolchain_file)])
         return args
+    
+    def get_cmake_build_args(self):
+        return []
 
     def need_cmake_build_type_var(self):
         return True
@@ -307,12 +313,13 @@ class BuildScript:
 
         # Set artifact name
         if args.ci:
-            print('::set-output name=artifact_name::BugfixedHL-{}-{}-{}-{}'.format(
-                self.release_version.replace('+', '-'),
-                self.build_target_name,
-                get_platform_type(),
-                self.git_hash
-            ))
+            with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                f.write('artifact_name=BugfixedHL-{}-{}-{}-{}'.format(
+                    self.release_version.replace('+', '-'),
+                    self.build_target_name,
+                    get_platform_type(),
+                    self.git_hash
+                ))
 
         out_dir = args.out_dir
         if out_dir:
@@ -403,6 +410,7 @@ class BuildScript:
             args.append('--target')
             args.extend(self.build_target.get_build_target_names())
             args.extend(['--config', self.build_type])
+            args.extend(self.platform.get_cmake_build_args())
 
             for i in args:
                 print('\'', i, '\' ', sep='', end='')
