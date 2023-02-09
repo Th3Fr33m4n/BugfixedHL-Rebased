@@ -72,6 +72,7 @@ int v_cameraMode = CAM_MODE_FOCUS;
 qboolean v_resetCamera = 1;
 
 Vector ev_punchangle;
+Vector v_client_aimangles;
 
 // Used in model rendering code for view model attachment reprojection
 Vector g_vViewOrigin;
@@ -831,6 +832,7 @@ void V_CalcNormalRefdef(struct ref_params_s *pparams)
 
 	// Store off v_angles before munging for third person
 	v_angles = pparams->viewangles;
+	v_client_aimangles = pparams->cl_viewangles;
 	v_lastAngles = pparams->viewangles;
 	//	v_cl_angles = pparams->cl_viewangles;	// keep old user mouse angles !
 	if (CL_IsThirdPerson())
