@@ -1,3 +1,6 @@
+Half-life Opposing Force multiplayer (no CTF yet) implemented over BHL.
+Based on the work made by Sam Vanheer and nekonomicon
+
 Bugfixed and improved Half-Life
 ===============================
 
